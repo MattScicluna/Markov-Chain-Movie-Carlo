@@ -49,7 +49,7 @@ f_csv = csv.writer(f)
 f_csv.writerow(["index", "title", "year", "budget", "gross", "country", "Genre", "keyword #1", "keyword #2", "keyword #3"])
 
 # change the number to get more movies
-MAX_MOVIES = 50
+MAX_MOVIES = 10
 
 progress = 0
 index = 0
@@ -67,7 +67,9 @@ while index < MAX_MOVIES:
     budget = ''
     country = ''
     gross = ''
-    keywords = ''
+    keywords1=''
+    keywords2=''
+    keywords3=''
     genre = ''
     try:
         details = soup.find('h2', text=re.compile('Details')).parent
@@ -77,7 +79,6 @@ while index < MAX_MOVIES:
         except Exception:
             print('No budget')
     
-        country = ''
         try:
             country = details.find(text='Country:').parent.next_sibling.next_sibling.get_text().strip()
         except Exception:
@@ -105,7 +106,6 @@ while index < MAX_MOVIES:
         except Exception:
             print('No keywords')
     
-            pass    
     except Exception:
         pass    
     
@@ -137,8 +137,7 @@ while index < MAX_MOVIES:
     allrows = cast.find_all('tr')
     # collect actor links
     actor_links = []
-    actor_fnames = []
-    actor_lnames = []
+    actor_names = []
     for row in allrows[1:]:
         if 'castlist_label' in row.td.get('class'):
             break # no more actors
@@ -147,15 +146,16 @@ while index < MAX_MOVIES:
         actor=row.get_text()
         href = 'http://www.imdb.com/filmosearch?explore=title_type&role='+link[6:15]+'&ref_=filmo_vw_smp&sort=year,desc&mode=simple&page=1&title_type=movie'
         actor_links.append(href)
+        actor_names.append(actor)
     print('{} actors.'.format(len(actor_links)))
     # There might be fewer than five actors
     if len(actor_links) < 5:
         choose = random.randint(0, len(actor_links) -1)
     else:
         choose = choose_weights(WEIGHTS)
-        href= actor_links[choose]
+    href = actor_links[choose]
     try:
-        print('Film Title: {0}, Actor Name: {1}'.format(title, actor))
+        print('Film Title: {0}, Actor Name: {1}'.format(title, actor_names[choose]))
     except Exception:
         pass # some titles have strange characters
     urllines = urllib.request.urlopen(href)
@@ -176,4 +176,3 @@ while index < MAX_MOVIES:
     movie = movies[choose2]
     
     print(movie)
-    
