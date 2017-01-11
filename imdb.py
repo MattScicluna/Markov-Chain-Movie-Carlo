@@ -45,21 +45,27 @@ def run(movie, max_movies):
     movie_stack.append(movie)
     all_movies = []
 
-    f = open('imdb.csv', 'w', newline='', buffering=1)
+    f = open('movies.csv', 'w', newline='', buffering=1)
+    g = open('actors.csv', 'w', newline='', buffering=1)
     f_csv = csv.writer(f)
+    g_csv = csv.writer(g)
 
     #  Write column headers as the first line
-    f_csv.writerow(["index",
-                    "title",
-                    "year",
-                    "budget",
-                    "gross",
-                    "country",
+    f_csv.writerow(["Index",
+                    "Title",
+                    "Year",
+                    "Budget",
+                    "Gross",
+                    "Country",
                     "Genre",
-                    "keyword #1",
-                    "keyword #2",
-                    "keyword #3"])
+                    "Keyword #1",
+                    "Keyword #2",
+                    "Keyword #3"])
 
+    g_csv.writerow(["Index",
+                    "Title",
+                    "First Name",
+                    "Last Name"])
 
     progress = 0
     index = 0
@@ -81,6 +87,7 @@ def run(movie, max_movies):
         keywords2 = ''
         keywords3 = ''
         genre = ''
+
         try:
             details = soup.find('h2', text=re.compile('Details')).parent
             storyline = soup.find('h2', text=re.compile('Storyline')).parent
@@ -121,7 +128,7 @@ def run(movie, max_movies):
 
         if title not in all_movies:
             all_movies.append(title)
-            f_csv.writerow([str(index), title, year, budget, gross, country, genre, keywords1, keywords2, keywords3,])
+            f_csv.writerow([str(index), title, year, budget, gross, country, genre, keywords1, keywords2, keywords3])
             index += 1
             progress = 0
         else:
@@ -174,6 +181,11 @@ def run(movie, max_movies):
 
         try:
             print('Film Title: {0}, Actor Name: {1}'.format(title, actor_names[choose]))
+            actor = actor_names[choose].split()
+            firstName = actor[0]
+            lastName = actor[1]
+            g_csv.writerow([str(index), title, firstName, lastName])
+
         except Exception:
             pass # some titles have strange characters
 
