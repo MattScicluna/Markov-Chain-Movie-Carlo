@@ -12,7 +12,7 @@ DEFAULT_STARTING_MOVIE = 'http://www.imdb.com/title/tt0102926/?ref_=nv_sr_1'
 WEIGHTS = [0.50, 0.25, 0.125, 0.075, 0.05]
 
 #  change this number to get more movies
-DEFAULT_MAX_MOVIES = 10
+DEFAULT_MAX_MOVIES = 20
 
 
 #  PDF to choose movies is exponential with mean = mu
@@ -220,8 +220,16 @@ if __name__ == "__main__":
 
     try:
         args = vars(parser.parse_args())
-        run(args['s'],args['m'])
+        if not args['s']:
+            s_arg = DEFAULT_STARTING_MOVIE
+        else:
+            s_arg = args['s']
+        if not args['m']:
+            m_arg = DEFAULT_MAX_MOVIES
+        else:
+            m_arg = args['m']
+
+        run(s_arg, m_arg)
 
     except SystemExit:
-        print("running default settings")
-        run(DEFAULT_STARTING_MOVIE, DEFAULT_MAX_MOVIES)
+        print("There was an error")
